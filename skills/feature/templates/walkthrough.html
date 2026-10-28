@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- SLOT: document title -->
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F4F6F8; --surface:#FFFFFF; --surface-2:#EDF0F4;
+  --ink:#16202E; --muted:#5B6776; --faint:#8D97A4; --hairline:#DCE1E8;
+  --accent:#2F4B7C; --accent-soft:#E7EDF6;
+  --review:#9A5B06; --review-soft:#FBF0DE;
+  --ok:#1B6B45; --ok-soft:#E2F1E9;
+  --stop:#A32017; --stop-soft:#FBE7E5;
+  --shadow:0 1px 2px rgba(22,32,46,.06),0 10px 30px -18px rgba(22,32,46,.35);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#11151B; --surface:#1A1F27; --surface-2:#222833;
+    --ink:#E5EAF1; --muted:#98A2AF; --faint:#76818F; --hairline:#2B3340;
+    --accent:#92B2E2; --accent-soft:#1E2836;
+    --review:#E0A857; --review-soft:#2C2416;
+    --ok:#5DC28D; --ok-soft:#15271F;
+    --stop:#F0908A; --stop-soft:#2C1917;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11151B; --surface:#1A1F27; --surface-2:#222833;
+  --ink:#E5EAF1; --muted:#98A2AF; --faint:#76818F; --hairline:#2B3340;
+  --accent:#92B2E2; --accent-soft:#1E2836;
+  --review:#E0A857; --review-soft:#2C2416;
+  --ok:#5DC28D; --ok-soft:#15271F;
+  --stop:#F0908A; --stop-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);overflow:hidden;
+  font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Spectral,Georgia,"Times New Roman",serif;text-wrap:balance;margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+
+/* ---------- shell ---------- */
+.deck{position:fixed;inset:0;display:flex;flex-direction:column}
+.rail{height:3px;background:var(--hairline);flex:none}
+.rail > i{display:block;height:100%;background:var(--accent);width:0;transition:width .28s ease}
+.stage{flex:1;position:relative;min-height:0}
+.slide{
+  position:absolute;inset:0;padding:clamp(20px,3.4vw,46px);
+  display:none;flex-direction:column;gap:clamp(12px,1.6vh,22px);
+}
+.slide.on{display:flex}
+@media (prefers-reduced-motion:no-preference){
+  .slide.on{animation:fade .22s ease both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+}
+
+/* ---------- chrome ---------- */
+.bar{
+  flex:none;display:flex;align-items:center;gap:14px;
+  padding:10px clamp(20px,3.4vw,46px);border-top:1px solid var(--hairline);
+  background:var(--surface);
+}
+.crumb{
+  flex:1;min-width:0;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.count{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.nav{display:flex;gap:8px;flex:none}
+.nav button{
+  width:38px;height:34px;display:grid;place-items:center;cursor:pointer;
+  background:var(--surface);color:var(--ink);border:1px solid var(--hairline);
+  font-size:15px;line-height:1;transition:background .14s ease
+}
+.nav button:hover:not(:disabled){background:var(--surface-2)}
+.nav button:disabled{opacity:.32;cursor:default}
+.nav button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);flex:none}
+@media (max-width:700px){.hint{display:none}}
+
+/* ---------- step slide layout ---------- */
+.step{display:grid;grid-template-columns:minmax(0,34fr) minmax(0,66fr);gap:clamp(18px,2.6vw,40px);flex:1;min-height:0}
+.say{display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;padding-right:6px}
+.say::-webkit-scrollbar{width:6px}
+.say::-webkit-scrollbar-thumb{background:var(--hairline)}
+.show{display:flex;flex-direction:column;gap:12px;min-height:0;justify-content:center}
+.frame{border:1px solid var(--hairline);background:var(--surface);box-shadow:var(--shadow);min-height:0;display:flex;flex-direction:column}
+.frame img{display:block;width:100%;height:100%;object-fit:contain;object-position:center top;min-height:0}
+
+@media (max-width:880px){
+  .step{grid-template-columns:1fr;overflow-y:auto}
+  .say{overflow:visible}
+  .show{min-height:42vh}
+}
+
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.who{
+  align-self:flex-start;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border:1px solid currentColor
+}
+.who.m{color:var(--accent)} .who.o{color:var(--review)}
+.step h3{font-size:clamp(1.25rem,2.1vw,1.7rem);line-height:1.22;letter-spacing:-.01em}
+.say p{margin:0;color:var(--muted);font-size:clamp(13.5px,1.05vw,15px)}
+.say p.lead{color:var(--ink)}
+.say p strong{color:var(--ink);font-weight:600}
+
+
+
+
+/* ---------- title slide ---------- */
+.cover{justify-content:center;max-width:1000px;margin-inline:auto;width:100%}
+.cover .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(2.4rem,6.4vw,4.4rem);line-height:1.02;font-weight:700;letter-spacing:-.02em}
+.cover p{font-family:Spectral,Georgia,serif;font-size:clamp(1.05rem,1.9vw,1.42rem);line-height:1.5;color:var(--muted);max-width:60ch;margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.facts span{font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:5px 10px;background:var(--surface-2);border:1px solid var(--hairline);color:var(--muted)}
+.facts b{color:var(--ink);font-weight:500}
+
+/* ---------- wide / overview ---------- */
+.wide{max-width:1180px;margin-inline:auto;width:100%;justify-content:center}
+.wide h2{font-size:clamp(1.7rem,3.4vw,2.5rem);letter-spacing:-.015em}
+.wide > p{color:var(--muted);max-width:66ch;margin:0;font-size:clamp(14px,1.1vw,16px)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--hairline);border-top:3px solid var(--accent);padding:18px;box-shadow:var(--shadow)}
+.card.b{border-top-color:var(--review)} .card.c{border-top-color:var(--stop)}
+.card .n{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.card h3{font-size:1.16rem;margin:7px 0}
+.card p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.card .p{margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--accent)}
+
+/* ---------- divider ---------- */
+.divider{justify-content:center;align-items:flex-start;max-width:1000px;margin-inline:auto;width:100%}
+.divider .n{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.divider h2{font-size:clamp(2.2rem,5.6vw,3.8rem);line-height:1.04;letter-spacing:-.02em;margin-top:10px}
+.divider p{color:var(--muted);max-width:60ch;font-size:clamp(14px,1.2vw,17px);margin:14px 0 0}
+.divider .facts{margin-top:22px}
+.divider.r2 .n{color:var(--review)} .divider.r3 .n{color:var(--stop)}
+
+/* ---------- findings ---------- */
+.finds{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.find{background:var(--surface);border:1px solid var(--hairline);padding:16px;display:flex;flex-direction:column;gap:8px}
+.find .sev{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border-top:2px solid var(--hairline);padding-top:7px}
+.find.p1 .sev{color:var(--stop);border-top-color:var(--stop)}
+.find.p2 .sev{color:var(--review);border-top-color:var(--review)}
+.find h4{font-size:1rem;line-height:1.3}
+.find p{margin:0;font-size:13px;color:var(--muted);line-height:1.48}
+.find code{font-size:11.5px;background:var(--surface-2);padding:1px 4px;border:1px solid var(--hairline)}
+
+.show.api{justify-content:flex-start;overflow-y:auto;gap:10px;display:block}.show.api .blk{margin-bottom:10px}
+.blk{border:1px solid var(--hairline);background:var(--surface);box-shadow:var(--shadow)}
+.blk .h{display:flex;gap:10px;align-items:center;padding:7px 12px;border-bottom:1px solid var(--hairline);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;color:var(--muted)}
+.blk .h b{color:var(--ink,#111);font-weight:500}
+.blk .h .ok{color:var(--accent)} .blk .h .bad{color:var(--stop)}
+.blk pre{margin:0;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.45;overflow-x:auto;white-space:pre}
+.who.s{color:var(--muted)}
+.wide{overflow-y:auto}
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="rail"><i id="rail"></i></div>
+  <main class="stage" id="stage">
+
+<!-- SLOT: cover slide -->
+<section class="slide cover" data-crumb="Title"><p class="eyebrow">{{EYEBROW}}</p><h1>{{TITLE}}</h1><p>{{COVER_SUMMARY}}</p><div class="facts"><span><b>{{FACT_LABEL}}</b> {{FACT_VALUE}}</span><span><b>{{FACT_LABEL}}</b> {{FACT_VALUE}}</span></div></section>
+
+<!-- SLOT: wide overview slide; .card variants: (default) accent, .b review, .c stop -->
+<section class="slide wide" data-crumb="{{CRUMB}}"><h2>{{OVERVIEW_HEADING}}</h2><p>{{OVERVIEW_TEXT}}</p><div class="cards"><div class="card"><div class="n">{{CARD_LABEL}}</div><h3>{{CARD_TITLE}}</h3><p>{{CARD_TEXT}}</p></div><div class="card b"><div class="n">{{CARD_LABEL}}</div><h3>{{CARD_TITLE}}</h3><p>{{CARD_TEXT}}</p></div><div class="card c"><div class="n">{{CARD_LABEL}}</div><h3>{{CARD_TITLE}}</h3><p>{{CARD_TEXT}}</p></div></div></section>
+
+<!-- SLOT: route divider; add .r2 or .r3 to recolour the label -->
+<section class="slide divider" data-crumb="{{ROUTE_NAME}}"><p class="n">{{ROUTE_NAME}}</p><h2>{{ROUTE_TITLE}}</h2><p>{{ROUTE_SUMMARY}}</p><div class="facts"><span>{{ROUTE_FACT}}</span><span>{{ROUTE_FACT}}</span></div></section>
+
+<!-- SLOT: screenshot step; actor chips: .who.m, .who.o, .who.s -->
+<section class="slide" data-crumb="{{ROUTE_NAME}} · step {{N}} of {{TOTAL}}"><div class="step"><div class="say"><div class="kicker">Step {{N}}</div><span class="who o">{{ACTOR}}</span><h3>{{STEP_TITLE}}</h3><p class="lead">{{STEP_SAY}}</p><p>{{STEP_DETAIL}}</p></div><div class="show"><div class="frame"><!-- base64 data URI embed only, no external URLs --><img src="{{BASE64_DATA_URI}}" alt="{{ALT}}"></div></div></div></section>
+
+<!-- SLOT: API step; one .blk per request/response, status class .ok or .bad -->
+<section class="slide" data-crumb="{{ROUTE_NAME}} · step {{N}} of {{TOTAL}}"><div class="step"><div class="say"><div class="kicker">Step {{N}}</div><span class="who m">{{ACTOR}}</span><h3>{{STEP_TITLE}}</h3><p class="lead">{{STEP_SAY}}</p><p>{{STEP_DETAIL}}</p></div><div class="show api"><div class="blk"><div class="h"><b>{{METHOD}}</b> {{PATH}}</div><pre>{{REQUEST_BODY}}</pre></div><div class="blk"><div class="h">Response <b class="ok">{{STATUS}}</b></div><pre>{{RESPONSE_BODY}}</pre></div></div></div></section>
+
+<!-- SLOT: observations; .find.p1 stop, .find.p2 review, plain .find neutral -->
+<section class="slide wide" data-crumb="Observations"><h2>Observations</h2><div class="finds"><div class="find p1"><div class="sev">{{SEVERITY}}</div><h4>{{FINDING_TITLE}}</h4><p>{{FINDING_TEXT}}</p></div><div class="find p2"><div class="sev">{{SEVERITY}}</div><h4>{{FINDING_TITLE}}</h4><p>{{FINDING_TEXT}}</p></div><div class="find"><div class="sev">{{SEVERITY}}</div><h4>{{FINDING_TITLE}}</h4><p>{{FINDING_TEXT}}</p></div></div></section>
+
+  </main>
+
+  <div class="bar">
+    <span class="crumb" id="crumb"></span>
+    <span class="hint">← → to move · Home / End to jump</span>
+    <span class="count" id="count"></span>
+    <div class="nav">
+      <button id="prev" aria-label="Previous slide">←</button>
+      <button id="next" aria-label="Next slide">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var i = 0;
+  var crumb = document.getElementById('crumb');
+  var count = document.getElementById('count');
+  var rail  = document.getElementById('rail');
+  var prev  = document.getElementById('prev');
+  var next  = document.getElementById('next');
+
+  function show(n, push){
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+    crumb.textContent = slides[i].dataset.crumb || '';
+    count.textContent = (i + 1) + ' / ' + total;
+    rail.style.width = ((i + 1) / total * 100) + '%';
+    prev.disabled = i === 0;
+    next.disabled = i === total - 1;
+    if (push !== false) history.replaceState(null, '', '#' + (i + 1));
+    slides[i].querySelectorAll('.say').forEach(function(el){ el.scrollTop = 0; });
+  }
+
+  prev.addEventListener('click', function(){ show(i - 1); });
+  next.addEventListener('click', function(){ show(i + 1); });
+
+  document.addEventListener('keydown', function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': show(i + 1); e.preventDefault(); break;
+      case 'ArrowLeft':  case 'PageUp':   show(i - 1); e.preventDefault(); break;
+      case ' ':          show(i + (e.shiftKey ? -1 : 1)); e.preventDefault(); break;
+      case 'Home':       show(0); e.preventDefault(); break;
+      case 'End':        show(total - 1); e.preventDefault(); break;
+    }
+  });
+
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 60) show(i + (dx < 0 ? 1 : -1));
+    x0 = null;
+  }, {passive:true});
+
+  var start = parseInt((location.hash || '').slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1, false);
+})();
+</script>
+</body>
+</html>

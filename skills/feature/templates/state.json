@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "feature": "",
+  "title": "",
+  "source": "",
+  "clickup": { "enabled": true, "story": "", "story_url": "" },
+  "repos": [],
+  "pause": false,
+  "current": { "stage": "00-intake", "checkpoint": "" },
+  "stages": [
+    { "id": "00-intake", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "01-clickup-story", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "02-scaffold", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "03-research", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "04-grilling", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "05-rewrite-folder", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "06-test-flows", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "07-build", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "08-review", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "09-prs", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "10-test", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "11-audit", "status": "pending", "reason": "", "checkpoints": [] },
+    { "id": "12-walkthrough", "status": "pending", "reason": "", "checkpoints": [] }
+  ],
+  "questions": [],
+  "decisions": [],
+  "test_flows_approved": false,
+  "tests": {},
+  "prs": [],
+  "audits": []
+}

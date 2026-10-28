@@ -1,0 +1,29 @@
+{
+  "docs_root": "/path/to/docs",
+  "github_owner": "rishikeshDpp",
+  "default_branch": "main",
+  "max_non_test_files_per_pr": 10,
+  "repos": {
+    "my_backend": { "path": "/path/to/my_backend", "type": "backend", "github": "org/my_backend" },
+    "my_frontend": { "path": "/path/to/my_frontend", "type": "frontend", "github": "org/my_frontend", "local_url": "http://localhost:5173" }
+  },
+  "review_checklists": {
+    "backend": ["/path/to/backend-review-checklist.md"],
+    "frontend": []
+  },
+  "repo_rules": {
+    "all": ["One-line comments only", "Constants only in constants files"],
+    "frontend": ["Form validation with yup"]
+  },
+  "skills": {
+    "clickup": "clickup-task",
+    "raising_pr": "raising-pr",
+    "backend_conventions": "backend-conventions"
+  },
+  "drisp": {
+    "bin": "drisp",
+    "workflow": "playwright-automation",
+    "flags": ["--json", "--on-permission=allow", "--on-question=empty"],
+    "timeout_ms": 1800000
+  }
+}

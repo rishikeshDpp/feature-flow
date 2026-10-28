@@ -1,0 +1,11 @@
+{
+  "name": "feature-flow",
+  "version": "1.0.0",
+  "description": "Staged, pausable feature-development pipeline: intake, research, grilling, test flows, build, review, PRs, local e2e tests, audit, walkthrough.",
+  "author": {
+    "name": "rishikeshDpp"
+  },
+  "repository": "https://github.com/rishikeshDpp/feature-flow",
+  "license": "MIT",
+  "keywords": ["workflow", "feature", "pipeline", "grilling", "planning"]
+}

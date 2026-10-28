@@ -1,0 +1,16 @@
+{
+  "description": "Detects 'pause' and 'skip <stage>' in prompts during an active feature-flow run.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/prompt-control.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "feature-flow",
+  "description": "Marketplace for the feature-flow Claude Code plugin.",
+  "owner": {
+    "name": "rishikeshDpp"
+  },
+  "plugins": [
+    {
+      "name": "feature-flow",
+      "description": "Staged, pausable feature-development pipeline.",
+      "version": "1.0.0",
+      "source": "./"
+    }
+  ]
+}
